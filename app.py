@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, emit, join_room
 from logic import ConnectFour
-from database import get_or_create_player, record_result, update_best_streak, get_leaderboard
+from database import get_or_create_player, record_result, update_best_streak, get_leaderboard, get_stats
 import random
 import string
 
@@ -31,6 +31,17 @@ def index():
 @app.route('/leaderboard')
 def leaderboard():
     return jsonify(get_leaderboard())
+
+@app.route('/admin')
+def admin():
+    password = request.args.get('pw', '')
+    if password != 'connectfour2026':
+        return 'Access denied.', 403
+    return render_template('admin.html',
+        stats=get_stats(),
+        players=get_leaderboard(50),
+        active_rooms=len(rooms)
+    )
 
 @socketio.on('create_room')
 def on_create_room(data):
