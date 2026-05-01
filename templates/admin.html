@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Four — Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f0e8;
+            --surface: rgba(255,255,255,0.7);
+            --border: rgba(180,160,130,0.25);
+            --text: #2d2416;
+            --muted: rgba(45,36,22,0.45);
+            --red: #d94f4f;
+            --blue: #3a7fbf;
+            --green: #3a9e5f;
+            --gold: #c49a4a;
+            --shadow: rgba(100,70,20,0.12);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 32px 24px;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+        h1 span { color: var(--gold); }
+        .subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 32px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 16px var(--shadow);
+        }
+        .stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--text);
+        }
+        .stat-sub {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        .stat-card.green .stat-value { color: var(--green); }
+        .stat-card.red   .stat-value { color: var(--red); }
+        .stat-card.blue  .stat-value { color: var(--blue); }
+        .stat-card.gold  .stat-value { color: var(--gold); }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px var(--shadow);
+        }
+        th {
+            background: rgba(200,169,110,0.15);
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+        td {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+        }
+        tr:hover td { background: rgba(255,255,255,0.5); }
+        .rank { font-weight: 700; font-size: 16px; }
+        .name { font-weight: 600; }
+        .wins   { color: var(--green); font-weight: 700; }
+        .losses { color: var(--red);   font-weight: 700; }
+        .draws  { color: var(--muted); font-weight: 600; }
+        .streak { color: var(--gold);  font-weight: 700; }
+
+        .win-rate {
+            display: inline-block;
+            background: rgba(58,158,95,0.12);
+            color: var(--green);
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .refresh-btn {
+            display: inline-block;
+            margin-bottom: 24px;
+            background: var(--gold);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .refresh-btn:hover { opacity: 0.85; }
+        .active-rooms {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(58,127,191,0.1);
+            color: var(--blue);
+            border: 1px solid rgba(58,127,191,0.2);
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            margin-left: 12px;
+        }
+        .dot-live {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 6px var(--green);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Connect <span>Four</span> — Admin</h1>
+    <p class="subtitle">Live stats dashboard · Refresh to update</p>
+
+    <a class="refresh-btn" href="?pw=connectfour2026">↻ Refresh</a>
+    <span class="active-rooms">
+        <span class="dot-live"></span>
+        {{ active_rooms }} active room{{ 's' if active_rooms != 1 else '' }}
+    </span>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+        <div class="stat-card blue">
+            <div class="stat-label">Total Players</div>
+            <div class="stat-value">{{ stats.total_players }}</div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-label">Games Played</div>
+            <div class="stat-value">{{ stats.total_games }}</div>
+        </div>
+        <div class="stat-card gold">
+            <div class="stat-label">Top Player</div>
+            <div class="stat-value" style="font-size:22px">{{ stats.top_player.name if stats.top_player else '—' }}</div>
+            <div class="stat-sub">{{ stats.top_player.wins if stats.top_player else 0 }} wins</div>
+        </div>
+        <div class="stat-card red">
+            <div class="stat-label">Best Streak</div>
+            <div class="stat-value" style="font-size:22px">{{ stats.best_streak.name if stats.best_streak else '—' }}</div>
+            <div class="stat-sub">🔥 {{ stats.best_streak.streak if stats.best_streak else 0 }} in a row</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Draws</div>
+            <div class="stat-value">{{ stats.total_draws }}</div>
+        </div>
+    </div>
+
+    <!-- Player Table -->
+    <div class="section-title">All Players</div>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Draws</th>
+                <th>Best Streak</th>
+                <th>Win Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in players %}
+            {% set total = p.wins + p.losses + p.draws %}
+            {% set rate = ((p.wins / total) * 100) | round(0) | int if total > 0 else 0 %}
+            <tr>
+                <td class="rank">
+                    {% if loop.index == 1 %}🥇
+                    {% elif loop.index == 2 %}🥈
+                    {% elif loop.index == 3 %}🥉
+                    {% else %}#{{ loop.index }}{% endif %}
+                </td>
+                <td class="name">{{ p.name }}</td>
+                <td class="wins">{{ p.wins }}</td>
+                <td class="losses">{{ p.losses }}</td>
+                <td class="draws">{{ p.draws }}</td>
+                <td class="streak">{{ '🔥 ' + p.best_streak|string if p.best_streak > 0 else '—' }}</td>
+                <td><span class="win-rate">{{ rate }}%</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
