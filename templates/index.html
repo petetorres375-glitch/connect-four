@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Connect Four</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- LOBBY -->
+    <div id="lobby">
+        <div class="lobby-inner">
+            <h1 class="logo">CONNECT<br><span>FOUR</span></h1>
+
+            <div class="lobby-card">
+                <input id="nameInput" type="text" maxlength="20" placeholder="Your name" autocomplete="off">
+
+                <div class="lobby-section-label">VS Computer</div>
+                <div class="difficulty-row">
+                    <button class="diff-btn active" data-diff="easy"   onclick="selectDiff(this)">Easy</button>
+                    <button class="diff-btn"        data-diff="medium" onclick="selectDiff(this)">Medium</button>
+                    <button class="diff-btn"        data-diff="hard"   onclick="selectDiff(this)">Hard</button>
+                </div>
+                <button onclick="startVsComputer()">Play vs Computer</button>
+
+                <div class="lobby-divider"></div>
+
+                <div class="lobby-section-label">Multiplayer</div>
+                <button onclick="createRoom()">Create Game</button>
+                <div class="join-row">
+                    <input id="codeInput" type="text" maxlength="4" placeholder="ABCD"
+                        oninput="this.value=this.value.toUpperCase()">
+                    <button class="join-btn" onclick="joinRoom()">Join</button>
+                </div>
+
+                <p id="lobbyStatus"></p>
+            </div>
+
+            <!-- Leaderboard -->
+            <div class="lobby-card leaderboard-card">
+                <div class="lobby-section-label">🏆 Leaderboard</div>
+                <div id="leaderboard-list">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME -->
+    <div id="game" style="display:none">
+        <div id="game-inner">
+            <div id="board-container">
+                <div id="game-header">
+                    <div class="player-tag" id="redTag">
+                        <span class="dot red-dot"></span>
+                        <div>
+                            <div class="player-name" id="redName">Red</div>
+                            <div class="score-row">
+                                <div class="score" id="redScore">0</div>
+                                <div class="streak" id="redStreak"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="status-container">
+                        <p id="status">Waiting...</p>
+                        <div id="room-info">Room: <span id="roomCode"></span></div>
+                    </div>
+
+                    <div class="player-tag right" id="yellowTag">
+                        <div style="text-align:right">
+                            <div class="player-name" id="yellowName">Cyan</div>
+                            <div class="score-row" style="justify-content:flex-end">
+                                <div class="streak" id="yellowStreak"></div>
+                                <div class="score" id="yellowScore">0</div>
+                            </div>
+                        </div>
+                        <span class="dot yellow-dot"></span>
+                    </div>
+                </div>
+
+                <div id="board"></div>
+
+                <!-- Emoji reactions -->
+                <div id="reaction-bar">
+                    <button class="react-btn" onclick="sendReaction('👍')">👍</button>
+                    <button class="react-btn" onclick="sendReaction('😂')">😂</button>
+                    <button class="react-btn" onclick="sendReaction('😮')">😮</button>
+                    <button class="react-btn" onclick="sendReaction('💀')">💀</button>
+                    <button class="react-btn" onclick="sendReaction('🔥')">🔥</button>
+                </div>
+
+                <div id="bottom-row">
+                    <button id="quitBtn" onclick="quitGame()">← Quit</button>
+                    <button id="rematchBtn" onclick="requestRematch()" style="display:none">Rematch</button>
+                </div>
+            </div>
+
+            <!-- CHAT -->
+            <div id="chat-panel">
+                <div id="chat-messages"></div>
+                <div id="chat-input-row">
+                    <input id="chatInput" type="text" placeholder="Say something..." maxlength="200"
+                        onkeydown="if(event.key==='Enter') sendChat()">
+                    <button onclick="sendChat()">→</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating reactions -->
+        <div id="reaction-float"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
