@@ -58,3 +58,20 @@ def get_leaderboard(limit=10):
         ]
 
 init_db()
+
+def get_stats():
+    with sqlite3.connect(DB_PATH) as conn:
+        total_players = conn.execute('SELECT COUNT(*) FROM players').fetchone()[0]
+        total_wins    = conn.execute('SELECT SUM(wins) FROM players').fetchone()[0] or 0
+        total_draws   = conn.execute('SELECT SUM(draws) FROM players').fetchone()[0] or 0
+        total_games   = total_wins + total_draws
+        top_player    = conn.execute('SELECT name, wins FROM players ORDER BY wins DESC LIMIT 1').fetchone()
+        best_streak   = conn.execute('SELECT name, best_streak FROM players ORDER BY best_streak DESC LIMIT 1').fetchone()
+    return {
+        'total_players': total_players,
+        'total_games': total_games,
+        'total_wins': total_wins,
+        'total_draws': total_draws,
+        'top_player': {'name': top_player[0], 'wins': top_player[1]} if top_player else None,
+        'best_streak': {'name': best_streak[0], 'streak': best_streak[1]} if best_streak else None,
+    }
