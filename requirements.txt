@@ -1,4 +1,5 @@
-flask
+-e flask
 flask-socketio
 gunicorn
 gevent
+psycopg2-binary
