@@ -639,3 +639,116 @@ input#nameInput:focus {
     #reaction-bar { gap: 6px; }
     .react-btn { font-size: 18px; padding: 5px 8px; }
 }
+
+/* ─── LOBBY OUTER & INSTRUCTIONS SIDEBAR ─────────────── */
+.lobby-outer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 32px;
+    width: 100%;
+    max-width: 1100px;
+    padding: 40px 24px;
+}
+
+.instructions-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 40px;
+}
+
+.instructions-card {
+    background: var(--glass);
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 20px var(--shadow);
+}
+
+.instr-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: var(--text);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+}
+
+.instr-section {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+    margin-top: 4px;
+}
+
+.instr-list {
+    list-style: decimal;
+    padding-left: 18px;
+    margin-bottom: 8px;
+}
+
+.instr-list li, .instr-tips li {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 3px;
+    font-weight: 300;
+}
+
+.instr-tips {
+    list-style: none;
+    padding-left: 0;
+}
+
+.instr-tips li::before {
+    content: '→ ';
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.instr-url {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    word-break: break-all;
+}
+
+.instr-divider {
+    border: none;
+    border-top: 1px solid var(--glass-border);
+    margin: 12px 0;
+}
+
+/* Override lobby to not add its own padding */
+#lobby {
+    align-items: flex-start;
+    padding: 0;
+}
+
+.lobby-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+@media (max-width: 700px) {
+    .lobby-outer {
+        flex-direction: column;
+        align-items: center;
+        padding: 24px 16px;
+        gap: 20px;
+    }
+    .instructions-sidebar {
+        width: 92vw;
+        position: static;
+    }
+}

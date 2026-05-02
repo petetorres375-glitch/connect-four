@@ -21,8 +21,7 @@ class ConnectFour:
                     self.winning_cells = cells
 
                 last_player = self.current_player
-                if not self.winner:
-                    self.current_player = "Yellow" if self.current_player == "Red" else "Red"
+                self.current_player = "Yellow" if self.current_player == "Red" else "Red"
                 return {
                     "row": row,
                     "col": col,

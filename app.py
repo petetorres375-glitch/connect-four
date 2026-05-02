@@ -36,7 +36,7 @@ def leaderboard():
 def admin():
     password = request.args.get('pw', '')
     if password != 'connectfour2026':
-        return 'Access denied.', 403
+        return 'Access denied. Add ?pw=connectfour2026 to the URL.', 403
     return render_template('admin.html',
         stats=get_stats(),
         players=get_leaderboard(50),
@@ -192,7 +192,6 @@ def on_make_move(data):
                 }
                 payload['scores'] = room['scores']
                 payload['streaks'] = room['streaks']
-                payload['next_turn'] = game.current_player
 
     socketio.emit('move_made', payload, room=code)
 
@@ -262,4 +261,4 @@ def on_disconnect():
             break
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
