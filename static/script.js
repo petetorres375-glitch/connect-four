@@ -43,23 +43,39 @@ function selectDiff(btn) {
 }
 
 function getName() {
-    return document.getElementById('nameInput').value.trim() || 'Player';
+    return document.getElementById('nameInput').value.trim();
+}
+
+function requireName() {
+    const name = getName();
+    if (!name) {
+        document.getElementById('lobbyStatus').innerText = 'Please enter your name first.';
+        document.getElementById('nameInput').focus();
+        return null;
+    }
+    return name;
 }
 
 function startVsComputer() {
-    socket.emit('start_vs_computer', { difficulty: selectedDiff, name: getName() });
+    const name = requireName();
+    if (!name) return;
+    socket.emit('start_vs_computer', { difficulty: selectedDiff, name });
 }
 
 function createRoom() {
+    const name = requireName();
+    if (!name) return;
     document.getElementById('lobbyStatus').innerText = 'Creating room...';
-    socket.emit('create_room', { name: getName() });
+    socket.emit('create_room', { name });
 }
 
 function joinRoom() {
+    const name = requireName();
+    if (!name) return;
     const code = document.getElementById('codeInput').value.trim().toUpperCase();
     if (code.length !== 4) { document.getElementById('lobbyStatus').innerText = 'Enter a 4-letter code'; return; }
     document.getElementById('lobbyStatus').innerText = 'Joining...';
-    socket.emit('join_room', { code, name: getName() });
+    socket.emit('join_room', { code, name });
 }
 
 socket.on('room_created', (data) => {
