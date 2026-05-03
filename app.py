@@ -28,6 +28,10 @@ def get_names(room):
 def index():
     return render_template('index.html')
 
+@app.route('/ping')
+def ping():
+    return 'OK', 200
+
 @app.route('/leaderboard')
 def leaderboard():
     return jsonify(get_leaderboard())
@@ -143,13 +147,16 @@ def on_make_move(data):
         room['streaks'][result['winner']] += 1
         loser = 'Yellow' if result['winner'] == 'Red' else 'Red'
         room['streaks'][loser] = 0
-        # Record to DB for PvP
         if room['mode'] == 'pvp':
             winner_name = names[result['winner']]
             loser_name = names[loser]
             record_result(winner_name, 'win')
             record_result(loser_name, 'loss')
             update_best_streak(winner_name, room['streaks'][result['winner']])
+        elif room['mode'] == 'pvc':
+            player_name = names['Red']
+            record_result(player_name, 'win')
+            update_best_streak(player_name, room['streaks']['Red'])
     elif draw:
         if room['mode'] == 'pvp':
             for p in room['players'].values():
@@ -181,6 +188,7 @@ def on_make_move(data):
                     room['streaks'][ai_result['winner']] += 1
                     player_name = names['Red']
                     record_result(player_name, 'loss')
+                    room['streaks']['Red'] = 0
                 payload['ai_move'] = {
                     'row': ai_result['row'],
                     'col': ai_result['col'],
@@ -261,4 +269,4 @@ def on_disconnect():
             break
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)
